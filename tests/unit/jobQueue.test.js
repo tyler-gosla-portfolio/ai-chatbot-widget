@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 // Mock the db connection for isolated testing
-vi.mock('../../src/db/connection.js', () => {
+vi.mock('../../src/db/connection.js', async () => {
   const Database = (await import('better-sqlite3')).default;
   const db = new Database(':memory:');
   db.pragma('foreign_keys = ON');

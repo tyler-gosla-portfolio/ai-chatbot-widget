@@ -27,17 +27,14 @@ export function dynamicCors(req, res, next) {
 
   try {
     const db = getDb();
-    const rows = db.prepare('SELECT allowed_origins FROM api_keys WHERE is_active = 1').all();
-    
-    let allowedOrigins = [];
-    for (const row of rows) {
-      try {
-        const origins = JSON.parse(row.allowed_origins || '[]');
-        allowedOrigins = allowedOrigins.concat(origins);
-      } catch {}
-    }
+    const row = db.prepare('SELECT allowed_origins FROM api_keys WHERE api_key = ? AND is_active = 1').get(apiKey);
 
-    const originAllowed = allowedOrigins.length === 0 || allowedOrigins.includes(origin) || allowedOrigins.includes('*');
+    let originAllowed = false;
+    if (row) {
+      let allowedOrigins = [];
+      try { allowedOrigins = JSON.parse(row.allowed_origins || '[]'); } catch {}
+      originAllowed = allowedOrigins.length === 0 || allowedOrigins.includes(origin) || allowedOrigins.includes('*');
+    }
 
     return cors({
       origin: originAllowed ? origin : false,

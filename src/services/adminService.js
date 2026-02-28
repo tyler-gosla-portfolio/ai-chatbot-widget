@@ -58,11 +58,16 @@ export function getBotConfig() {
   return db.prepare('SELECT * FROM bot_config WHERE id = ?').get('default');
 }
 
+const ALLOWED_CONFIG_COLUMNS = new Set(['bot_name', 'system_prompt', 'welcome_message', 'model', 'temperature', 'max_tokens', 'similarity_threshold']);
+
 export function updateBotConfig(fields) {
   const db = getDb();
-  const allowed = ['bot_name', 'system_prompt', 'welcome_message', 'model', 'temperature', 'max_tokens', 'similarity_threshold'];
-  const updates = Object.entries(fields).filter(([k]) => allowed.includes(k));
+  const updates = Object.entries(fields).filter(([k]) => ALLOWED_CONFIG_COLUMNS.has(k));
   if (updates.length === 0) return getBotConfig();
+  // Extra assertion: column names must be lowercase letters/underscores only
+  for (const [k] of updates) {
+    if (!/^[a-z_]+$/.test(k)) throw Object.assign(new Error(`Invalid column: ${k}`), { status: 400, code: 'bad_request' });
+  }
   const setClauses = updates.map(([k]) => `${k} = ?`).join(', ');
   const values = updates.map(([, v]) => v);
   db.prepare(`UPDATE bot_config SET ${setClauses} WHERE id = 'default'`).run(...values);

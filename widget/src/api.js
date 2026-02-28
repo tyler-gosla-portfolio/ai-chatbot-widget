@@ -34,6 +34,7 @@ export class ChatApi {
       const decoder = new TextDecoder();
       let buffer = '';
       let returnedSessionId = newSessionId;
+      let receivedDone = false;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -53,12 +54,18 @@ export class ChatApi {
             } else if (data.type === 'token') {
               if (onToken) onToken(data.content);
             } else if (data.type === 'done') {
+              receivedDone = true;
               if (onDone) onDone({ messageId: data.messageId, sessionId: returnedSessionId });
             } else if (data.type === 'error') {
               if (onError) onError(data.message || 'An error occurred');
             }
           } catch {}
         }
+      }
+
+      // Stream ended without a 'done' event — signal interruption
+      if (!receivedDone) {
+        if (onError) onError('Response interrupted. Please retry.');
       }
 
       return returnedSessionId;

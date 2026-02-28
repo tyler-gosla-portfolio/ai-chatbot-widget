@@ -68,9 +68,13 @@ class ChatbotWidgetInstance extends EventEmitter {
     this.emit('message:sent', { message });
 
     // Cache user message
+    const MAX_CACHED_MESSAGES = 100;
     const userMsg = { role: 'user', content: message, timestamp: new Date().toISOString() };
     const history = this._storage.get('messages') || [];
     history.push(userMsg);
+    if (history.length > MAX_CACHED_MESSAGES) {
+      history.splice(0, history.length - MAX_CACHED_MESSAGES);
+    }
 
     let streamBubble = null;
     let fullResponse = '';
@@ -106,6 +110,10 @@ class ChatbotWidgetInstance extends EventEmitter {
       },
       onError: (errMsg) => {
         this._ui.removeTyping();
+        // If streaming already started, mark the bubble as interrupted
+        if (streamBubble && fullResponse) {
+          streamBubble.textContent += ' (response interrupted)';
+        }
         this._ui.setInputDisabled(false);
         this._ui.showError(errMsg || 'Unable to connect. Please try again.', () => {
           this._ui.hideError();

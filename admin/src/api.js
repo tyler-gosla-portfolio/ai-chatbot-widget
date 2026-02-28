@@ -47,12 +47,23 @@ export const api = {
   // KB
   getDocuments: (limit = 20, offset = 0) =>
     request(`/admin/kb/documents?limit=${limit}&offset=${offset}`),
-  uploadDocument: (formData) =>
-    fetch(`${BASE_URL}/admin/kb/documents`, {
+  uploadDocument: async (formData) => {
+    const res = await fetch(`${BASE_URL}/admin/kb/documents`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${getToken()}` },
       body: formData,
-    }).then(r => r.json()),
+    });
+    if (res.status === 401) {
+      localStorage.removeItem('admin_token');
+      window.location.href = '/admin/';
+      return;
+    }
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Upload failed');
+    }
+    return res.json();
+  },
   getDocumentStatus: (id) => request(`/admin/kb/documents/${id}/status`),
   deleteDocument: (id) => request(`/admin/kb/documents/${id}`, { method: 'DELETE' }),
   searchKb: (query, topK = 5) =>

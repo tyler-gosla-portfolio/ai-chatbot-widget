@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 
 export const newId = (prefix) => `${prefix}_${uuidv4().replace(/-/g, '')}`;
 
@@ -11,8 +12,6 @@ export const newJobId = () => newId('job');
 export const newAdminId = () => newId('adm');
 
 export const generateApiKey = () => {
-  const bytes = new Uint8Array(24);
-  crypto.getRandomValues(bytes);
-  const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  const hex = crypto.randomBytes(24).toString('hex');
   return `pk_live_${hex}`;
 };

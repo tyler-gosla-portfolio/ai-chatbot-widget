@@ -6,7 +6,7 @@ import { env } from './config.js';
 import { getDb } from './db/connection.js';
 import { runMigrations } from './db/migrate.js';
 import { loadAllEmbeddings } from './services/embeddingService.js';
-import { startWorker, registerHandler } from './jobs/queue.js';
+import { startWorker, stopWorker, registerHandler } from './jobs/queue.js';
 import { embedDocumentHandler } from './jobs/embedDocument.js';
 import { dynamicCors } from './middleware/cors.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -78,6 +78,7 @@ const server = app.listen(PORT, () => {
 // Graceful shutdown
 process.on('SIGTERM', () => {
   logger.info('SIGTERM received, shutting down gracefully');
+  stopWorker();
   server.close(() => {
     logger.info('Server closed');
     process.exit(0);
