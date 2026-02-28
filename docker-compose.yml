@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  chatbot:
+    build: .
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - chatbot-data:/app/data
+      - chatbot-uploads:/app/uploads
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  chatbot-data:
+    driver: local
+  chatbot-uploads:
+    driver: local

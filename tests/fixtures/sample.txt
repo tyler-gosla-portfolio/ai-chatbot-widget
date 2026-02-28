@@ -1,0 +1,31 @@
+AI Chatbot Widget - Sample Document
+
+This is a sample text document for testing the knowledge base.
+
+Password Reset Instructions
+
+To reset your password, follow these steps:
+1. Click "Forgot Password" on the login page
+2. Enter your email address
+3. Check your email for a reset link
+4. Click the link and enter your new password
+5. Your password must be at least 8 characters
+
+Frequently Asked Questions
+
+Q: How do I contact support?
+A: You can reach support via email at support@example.com or through the chat widget.
+
+Q: What are your business hours?
+A: We are available Monday through Friday, 9am to 5pm EST.
+
+Q: How do I update my billing information?
+A: Log in to your account, go to Settings, and click on Billing.
+
+Getting Started Guide
+
+Welcome to our platform! Here is how to get started:
+
+First, create an account by clicking the Sign Up button. Fill in your name, email, and password. Verify your email address by clicking the link we send you. Once verified, you can log in and start using the platform.
+
+The dashboard gives you an overview of all your projects and recent activity. Click on any project to see details and manage your content.
