@@ -7,3 +7,6 @@ admin/dist/
 admin/node_modules/
 *.log
 .DS_Store
+coverage/
+test-results/
+tests/e2e/results.json
